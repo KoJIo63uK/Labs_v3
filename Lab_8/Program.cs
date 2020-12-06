@@ -1,34 +1,56 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-
 namespace Lab_8
 {
     class Program
     {
         static void Main(string[] args)
         {
-            var list = new List<ArrayItem>
-            {
-                new SummAfter(0, -3),
-                new SummBefore(1, 1),
-                new SummAfter(2, 1),
-                new SummBefore(3, -1),
-                new SummAfter(4, 1),
-                new SummBefore(5,-3),
-                new SummAfter(6, 1),
-                new SummBefore(7, -3),
-                new SummAfter(8, -3),
-            };
+            var list = new MyArray(5);
 
-            foreach (var item in list)
+            for (int i = 0; i < list.Count; i++)
             {
-                Console.Write($"Old value: {item.Value} | ");
-                item.Action(list);
-                Console.WriteLine($"New value: {item.Value}");
+                Console.Write($"Old value: {list[i].Value} | ");
+                list[i].Action(list);
+                Console.WriteLine($"New value: {list[i].Value}");
             }
 
             Console.ReadKey();
+        }
+    }
+
+    public class MyArray
+    {
+        public ArrayItem this[int index]
+        {
+            get
+            {
+                return _array[index];
+            }
+            set
+            {
+                _array[index] = value;
+            }
+        }
+        
+        public int Count => _array.Length;
+        
+        private ArrayItem[] _array;
+
+        public MyArray(int count)
+        {
+            _array = new ArrayItem[count];
+            var random = new Random();
+            for (int i = 0; i < count; i++)
+            {
+                if(i % 2 == 0)
+                {
+                    _array[i] = new SummAfter(i, random.Next(-10, 10));
+                }
+                else
+                {
+                    _array[i] = new SummBefore(i, random.Next(-10, 10));
+                }
+            }
         }
     }
 
@@ -44,7 +66,7 @@ namespace Lab_8
             Value = value;
         }
 
-        public abstract void Action(ICollection<ArrayItem> collection);
+        public abstract void Action(MyArray collection);
     }
 
     public class SummAfter : ArrayItem
@@ -53,9 +75,9 @@ namespace Lab_8
         {
         }
 
-        public override void Action(ICollection<ArrayItem> collection)
+        public override void Action(MyArray collection)
         {
-            var list = collection.ToList();
+            var list = collection;
             for (int i = Index + 1; i < collection.Count; i++)
             {
                 if (list[i].Value > 0)
@@ -72,9 +94,9 @@ namespace Lab_8
         {
         }
 
-        public override void Action(ICollection<ArrayItem> collection)
+        public override void Action(MyArray collection)
         {
-            var list = collection.ToList();
+            var list = collection;
             for (int i = Index - 1; i >= 0; i--)
             {
                 if (list[i].Value > 0)
